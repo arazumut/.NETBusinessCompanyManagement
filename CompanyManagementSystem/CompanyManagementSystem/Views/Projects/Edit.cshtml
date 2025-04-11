@@ -47,6 +47,13 @@
                             </select>
                             <span asp-validation-for="Status" class="text-danger"></span>
                         </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CustomerId" class="form-label">Müşteri</label>
+                            <select asp-for="CustomerId" class="form-select" asp-items="ViewBag.Customers">
+                                <option value="">-- Müşteri Seçin --</option>
+                            </select>
+                        </div>
                         
                         <div class="mb-3">
                             <label class="form-label">Proje Ekibi</label>

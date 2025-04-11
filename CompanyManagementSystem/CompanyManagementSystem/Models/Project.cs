@@ -30,6 +30,13 @@ namespace CompanyManagementSystem.Models
         [Display(Name = "Durum")]
         public ProjectStatus Status { get; set; } = ProjectStatus.Planning;
 
+        // Müşteri ile ilişki
+        [Display(Name = "Müşteri")]
+        public int? CustomerId { get; set; }
+
+        [ForeignKey("CustomerId")]
+        public virtual Customer? Customer { get; set; }
+
         // İlişkiler
         public virtual ICollection<Employee>? Employees { get; set; }
         public virtual ICollection<WorkTask>? Tasks { get; set; }

@@ -42,6 +42,7 @@
                             <th>@Html.DisplayNameFor(model => model.StartDate)</th>
                             <th>@Html.DisplayNameFor(model => model.EndDate)</th>
                             <th>@Html.DisplayNameFor(model => model.Status)</th>
+                            <th>Müşteri</th>
                             <th>İşlemler</th>
                         </tr>
                     </thead>
@@ -57,7 +58,7 @@
                                     @switch (item.Status)
                                     {
                                         case ProjectStatus.Planning:
-                                            <span class="badge bg-secondary">Planlama</span>
+                                            <span class="badge bg-info">Planlama</span>
                                             break;
                                         case ProjectStatus.InProgress:
                                             <span class="badge bg-primary">Devam Ediyor</span>
@@ -71,6 +72,18 @@
                                         case ProjectStatus.OnHold:
                                             <span class="badge bg-warning">Beklemede</span>
                                             break;
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.Customer != null)
+                                    {
+                                        <a asp-controller="Customers" asp-action="Details" asp-route-id="@item.CustomerId">
+                                            @item.Customer.Name
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
                                     }
                                 </td>
                                 <td>

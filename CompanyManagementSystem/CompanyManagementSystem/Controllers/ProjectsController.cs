@@ -58,7 +58,12 @@ namespace CompanyManagementSystem.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public IActionResult Create()
         {
-            ViewBag.Employees = new MultiSelectList(_context.Employees.Where(e => e.IsActive), "Id", "FullName");
+            var employees = _context.Employees.Where(e => e.IsActive).ToList();
+            var customers = _context.Customers.Where(c => c.IsActive).ToList();
+            
+            ViewBag.Employees = new MultiSelectList(employees, "Id", "FullName");
+            ViewBag.Customers = new SelectList(customers, "Id", "Name");
+            
             return View();
         }
 
@@ -66,7 +71,7 @@ namespace CompanyManagementSystem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> Create([Bind("Name,Description,StartDate,EndDate,Status")] Project project, int[] selectedEmployees)
+        public async Task<IActionResult> Create([Bind("Name,Description,StartDate,EndDate,Status,CustomerId")] Project project, int[] selectedEmployees)
         {
             try
             {
@@ -100,7 +105,12 @@ namespace CompanyManagementSystem.Controllers
                 LogError(ex, "Proje ekleme hatası");
             }
             
-            ViewBag.Employees = new MultiSelectList(_context.Employees.Where(e => e.IsActive), "Id", "FullName", selectedEmployees);
+            var employees = _context.Employees.Where(e => e.IsActive).ToList();
+            var customers = _context.Customers.Where(c => c.IsActive).ToList();
+            
+            ViewBag.Employees = new MultiSelectList(employees, "Id", "FullName", selectedEmployees);
+            ViewBag.Customers = new SelectList(customers, "Id", "Name", project.CustomerId);
+            
             return View(project);
         }
 
@@ -122,8 +132,12 @@ namespace CompanyManagementSystem.Controllers
                 return NotFound();
             }
             
+            var employees = _context.Employees.Where(e => e.IsActive).ToList();
+            var customers = _context.Customers.Where(c => c.IsActive).ToList();
             var selectedEmployees = project.Employees?.Select(e => e.Id).ToArray() ?? Array.Empty<int>();
-            ViewBag.Employees = new MultiSelectList(_context.Employees.Where(e => e.IsActive), "Id", "FullName", selectedEmployees);
+            
+            ViewBag.Employees = new MultiSelectList(employees, "Id", "FullName", selectedEmployees);
+            ViewBag.Customers = new SelectList(customers, "Id", "Name", project.CustomerId);
             
             return View(project);
         }
@@ -132,7 +146,7 @@ namespace CompanyManagementSystem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,StartDate,EndDate,Status")] Project project, int[] selectedEmployees)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,StartDate,EndDate,Status,CustomerId")] Project project, int[] selectedEmployees)
         {
             if (id != project.Id)
             {
@@ -159,6 +173,7 @@ namespace CompanyManagementSystem.Controllers
                     existingProject.StartDate = project.StartDate;
                     existingProject.EndDate = project.EndDate;
                     existingProject.Status = project.Status;
+                    existingProject.CustomerId = project.CustomerId;
                     
                     // Çalışanları güncelle
                     if (existingProject.Employees == null)
@@ -205,7 +220,12 @@ namespace CompanyManagementSystem.Controllers
                 }
             }
             
-            ViewBag.Employees = new MultiSelectList(_context.Employees.Where(e => e.IsActive), "Id", "FullName", selectedEmployees);
+            var employees = _context.Employees.Where(e => e.IsActive).ToList();
+            var customers = _context.Customers.Where(c => c.IsActive).ToList();
+            
+            ViewBag.Employees = new MultiSelectList(employees, "Id", "FullName", selectedEmployees);
+            ViewBag.Customers = new SelectList(customers, "Id", "Name", project.CustomerId);
+            
             return View(project);
         }
 

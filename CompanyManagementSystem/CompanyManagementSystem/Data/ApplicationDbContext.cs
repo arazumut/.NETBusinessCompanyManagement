@@ -28,6 +28,9 @@ namespace CompanyManagementSystem.Data
         
         // Görev için DbSet (isteğe bağlı)
         public DbSet<WorkTask> WorkTasks { get; set; }
+        
+        // Müşteri için DbSet
+        public DbSet<Customer> Customers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
