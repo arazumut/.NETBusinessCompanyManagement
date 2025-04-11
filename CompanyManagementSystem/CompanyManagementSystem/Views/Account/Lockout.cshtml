@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "Hesap Kilitlendi";
+}
+
+<div class="container py-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body py-5">
+                    <i class="bi bi-lock-fill text-danger display-1 mb-4"></i>
+                    <h1 class="text-danger">@ViewData["Title"]</h1>
+                    <p class="lead mt-3">
+                        Bu hesap geçici olarak kilitlenmiştir. Lütfen daha sonra tekrar deneyiniz veya yönetici ile iletişime geçiniz.
+                    </p>
+                    <div class="mt-4">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Ana Sayfaya Dön</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

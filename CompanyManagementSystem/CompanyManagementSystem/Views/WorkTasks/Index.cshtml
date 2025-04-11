@@ -1,0 +1,116 @@
+@model IEnumerable<CompanyManagementSystem.Models.WorkTask>
+
+@{
+    ViewData["Title"] = "Görevler";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>@ViewData["Title"]</h1>
+            <div class="btn-group" role="group">
+                <a asp-action="Index" class="btn btn-outline-primary">Tüm Görevler</a>
+                <a asp-action="MyTasks" class="btn btn-outline-primary">Görevlerim</a>
+            </div>
+        </div>
+        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+        {
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Yeni Görev
+            </a>
+        }
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.Name)</th>
+                            <th>@Html.DisplayNameFor(model => model.Project)</th>
+                            <th>@Html.DisplayNameFor(model => model.AssignedTo)</th>
+                            <th>@Html.DisplayNameFor(model => model.DueDate)</th>
+                            <th>@Html.DisplayNameFor(model => model.Status)</th>
+                            <th>@Html.DisplayNameFor(model => model.Priority)</th>
+                            <th>@Html.DisplayNameFor(model => model.CompletionPercentage)</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Project.Name)</td>
+                                <td>@(item.AssignedTo != null ? item.AssignedTo.FullName : "-")</td>
+                                <td>@(item.DueDate.HasValue ? item.DueDate.Value.ToShortDateString() : "-")</td>
+                                <td>
+                                    @switch (item.Status)
+                                    {
+                                        case WorkTaskStatus.ToDo:
+                                            <span class="badge bg-secondary">Yapılacak</span>
+                                            break;
+                                        case WorkTaskStatus.InProgress:
+                                            <span class="badge bg-primary">Devam Ediyor</span>
+                                            break;
+                                        case WorkTaskStatus.Done:
+                                            <span class="badge bg-success">Tamamlandı</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    @switch (item.Priority)
+                                    {
+                                        case Priority.Low:
+                                            <span class="badge bg-info">Düşük</span>
+                                            break;
+                                        case Priority.Medium:
+                                            <span class="badge bg-warning">Orta</span>
+                                            break;
+                                        case Priority.High:
+                                            <span class="badge bg-danger">Yüksek</span>
+                                            break;
+                                        case Priority.Urgent:
+                                            <span class="badge bg-danger">Acil</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" style="width: @(item.CompletionPercentage)%;" 
+                                             aria-valuenow="@item.CompletionPercentage" aria-valuemin="0" aria-valuemax="100">
+                                            @item.CompletionPercentage%
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil"></i> Düzenle
+                                            </a>
+                                        }
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
+                                            <i class="bi bi-info-circle"></i> Detaylar
+                                        </a>
+                                        <a asp-action="UpdateStatus" asp-route-id="@item.Id" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-check2-circle"></i> Durum Güncelle
+                                        </a>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i> Sil
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Şirket Yönetim Sistemi</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/CompanyManagementSystem.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Şirket Yönetim Sistemi</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
+                        </li>
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="managementDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Yönetim
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="managementDropdown">
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="Departments" asp-action="Index">Departmanlar</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Positions" asp-action="Index">Pozisyonlar</a></li>
+                                    }
+                                    <li><a class="dropdown-item" asp-controller="Employees" asp-action="Index">Personeller</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Projects" asp-action="Index">Projeler</a></li>
+                                    <li><a class="dropdown-item" asp-controller="WorkTasks" asp-action="Index">Görevler</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Leaves" asp-action="Index">İzinler</a></li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; @DateTime.Now.Year - Şirket Yönetim Sistemi - <a asp-area="" asp-controller="Home" asp-action="Privacy">Gizlilik</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

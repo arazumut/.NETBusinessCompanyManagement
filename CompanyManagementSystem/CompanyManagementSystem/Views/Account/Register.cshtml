@@ -1,0 +1,56 @@
+@model CompanyManagementSystem.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Kayıt Ol";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="text-center mb-0">@ViewData["Title"]</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label"></label>
+                            <input asp-for="Password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label"></label>
+                            <input asp-for="ConfirmPassword" class="form-control" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle-fill"></i> Kayıt olduktan sonra yöneticiler tarafından profiliniz tamamlanacaktır.
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Kayıt Ol</button>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <p>Zaten hesabınız var mı? <a asp-action="Login">Giriş Yap</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+} 

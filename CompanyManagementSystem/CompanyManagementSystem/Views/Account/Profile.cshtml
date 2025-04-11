@@ -1,0 +1,114 @@
+@model object
+
+@{
+    ViewData["Title"] = "Profil";
+    var isEmployee = Model is CompanyManagementSystem.ViewModels.EmployeeProfileViewModel;
+}
+
+<div class="container py-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Profil Bilgileri</h2>
+        </div>
+        <div class="card-body">
+            @if (isEmployee)
+            {
+                var employee = Model as CompanyManagementSystem.ViewModels.EmployeeProfileViewModel;
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <h5 class="text-muted mb-1">Ad Soyad</h5>
+                            <p class="fs-5">@employee.FullName</p>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="text-muted mb-1">TC Kimlik No</h5>
+                            <p class="fs-5">@employee.IdentityNumber</p>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="text-muted mb-1">E-posta</h5>
+                            <p class="fs-5">@employee.Email</p>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="text-muted mb-1">Telefon</h5>
+                            <p class="fs-5">@(string.IsNullOrEmpty(employee.Phone) ? "-" : employee.Phone)</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <h5 class="text-muted mb-1">Departman</h5>
+                            <p class="fs-5">@employee.Department</p>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="text-muted mb-1">Pozisyon</h5>
+                            <p class="fs-5">@employee.Position</p>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="text-muted mb-1">Başlama Tarihi</h5>
+                            <p class="fs-5">@employee.StartDate.ToShortDateString()</p>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="text-muted mb-1">Durum</h5>
+                            <p>
+                                @if (employee.IsActive)
+                                {
+                                    <span class="badge bg-success fs-6">Aktif</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger fs-6">Pasif</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <h5 class="text-muted mb-1">Adres</h5>
+                    <p class="fs-5">@(string.IsNullOrEmpty(employee.Address) ? "-" : employee.Address)</p>
+                </div>
+                <div class="mb-3">
+                    <h5 class="text-muted mb-1">Roller</h5>
+                    <div>
+                        @foreach (var role in employee.Roles)
+                        {
+                            <span class="badge bg-primary me-2">@role</span>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                var user = Model as CompanyManagementSystem.ViewModels.UserProfileViewModel;
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    Personel kaydınız henüz oluşturulmamış. Lütfen yöneticinizle iletişime geçiniz.
+                </div>
+                <div class="mb-3">
+                    <h5 class="text-muted mb-1">Kullanıcı Adı</h5>
+                    <p class="fs-5">@user.UserName</p>
+                </div>
+                <div class="mb-3">
+                    <h5 class="text-muted mb-1">E-posta</h5>
+                    <p class="fs-5">@user.Email</p>
+                </div>
+                <div class="mb-3">
+                    <h5 class="text-muted mb-1">Telefon</h5>
+                    <p class="fs-5">@(string.IsNullOrEmpty(user.PhoneNumber) ? "-" : user.PhoneNumber)</p>
+                </div>
+                <div class="mb-3">
+                    <h5 class="text-muted mb-1">Roller</h5>
+                    <div>
+                        @foreach (var role in user.Roles)
+                        {
+                            <span class="badge bg-primary me-2">@role</span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="card-footer">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                <i class="bi bi-house"></i> Ana Sayfaya Dön
+            </a>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,47 @@
+@model CompanyManagementSystem.Models.Department
+
+@{
+    ViewData["Title"] = "Yeni Departman";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="text-center mb-0">@ViewData["Title"]</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Listeye Dön
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

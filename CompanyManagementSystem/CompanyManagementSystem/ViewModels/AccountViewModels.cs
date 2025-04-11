@@ -1,0 +1,39 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace CompanyManagementSystem.ViewModels
+{
+    public class LoginViewModel
+    {
+        [Required(ErrorMessage = "E-posta adresi zorunludur.")]
+        [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi giriniz.")]
+        [Display(Name = "E-posta")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Şifre zorunludur.")]
+        [DataType(DataType.Password)]
+        [Display(Name = "Şifre")]
+        public string Password { get; set; }
+
+        [Display(Name = "Beni hatırla")]
+        public bool RememberMe { get; set; }
+    }
+
+    public class RegisterViewModel
+    {
+        [Required(ErrorMessage = "E-posta adresi zorunludur.")]
+        [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi giriniz.")]
+        [Display(Name = "E-posta")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Şifre zorunludur.")]
+        [StringLength(100, ErrorMessage = "{0} en az {2} ve en fazla {1} karakter uzunluğunda olmalıdır.", MinimumLength = 8)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Şifre")]
+        public string Password { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Şifre tekrar")]
+        [Compare("Password", ErrorMessage = "Şifreler eşleşmiyor.")]
+        public string ConfirmPassword { get; set; }
+    }
+} 
