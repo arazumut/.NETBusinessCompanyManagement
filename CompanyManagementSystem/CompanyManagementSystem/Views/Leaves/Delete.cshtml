@@ -1,0 +1,108 @@
+@model CompanyManagementSystem.Models.Leave
+
+@{
+    ViewData["Title"] = "İzin Sil";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> İzin Listesine Dön
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h5 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Dikkat!</h5>
+                        <p>Bu izin kaydını silmek üzeresiniz. Bu işlem geri alınamaz.</p>
+                    </div>
+
+                    <div class="row mb-3">
+                        <h4 class="card-title border-bottom pb-2">İzin Bilgileri</h4>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.Employee)</div>
+                            <div class="fw-bold">@Html.DisplayFor(model => model.Employee.FullName)</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.LeaveType)</div>
+                            <div class="fw-bold">
+                                @switch (Model.LeaveType)
+                                {
+                                    case LeaveType.Annual:
+                                        <span>Yıllık İzin</span>
+                                        break;
+                                    case LeaveType.Sick:
+                                        <span>Hastalık</span>
+                                        break;
+                                    case LeaveType.Personal:
+                                        <span>Mazeret</span>
+                                        break;
+                                    case LeaveType.Maternity:
+                                        <span>Doğum</span>
+                                        break;
+                                    case LeaveType.Paternity:
+                                        <span>Babalık</span>
+                                        break;
+                                    case LeaveType.Marriage:
+                                        <span>Evlilik</span>
+                                        break;
+                                    case LeaveType.Other:
+                                        <span>Diğer</span>
+                                        break;
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.StartDate)</div>
+                            <div class="fw-bold">@Model.StartDate.ToShortDateString()</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.EndDate)</div>
+                            <div class="fw-bold">@Model.EndDate.ToShortDateString()</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.Status)</div>
+                            <div class="fw-bold">
+                                @switch (Model.Status)
+                                {
+                                    case LeaveStatus.Pending:
+                                        <span class="badge bg-warning">Bekliyor</span>
+                                        break;
+                                    case LeaveStatus.Approved:
+                                        <span class="badge bg-success">Onaylandı</span>
+                                        break;
+                                    case LeaveStatus.Rejected:
+                                        <span class="badge bg-danger">Reddedildi</span>
+                                        break;
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.RequestDate)</div>
+                            <div class="fw-bold">@Model.RequestDate.ToString("dd.MM.yyyy HH:mm")</div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.Description)</div>
+                            <div class="fw-bold">@Html.DisplayFor(model => model.Description)</div>
+                        </div>
+                    </div>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Sil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

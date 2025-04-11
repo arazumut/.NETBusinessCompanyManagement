@@ -1,0 +1,156 @@
+@model CompanyManagementSystem.Models.Leave
+
+@{
+    ViewData["Title"] = "İzin Detayları";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>@ViewData["Title"]</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> İzin Listesine Dön
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <h4 class="card-title border-bottom pb-2">Genel Bilgiler</h4>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.Employee)</div>
+                            <div class="fw-bold">@Html.DisplayFor(model => model.Employee.FullName)</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.LeaveType)</div>
+                            <div class="fw-bold">
+                                @switch (Model.LeaveType)
+                                {
+                                    case LeaveType.Annual:
+                                        <span>Yıllık İzin</span>
+                                        break;
+                                    case LeaveType.Sick:
+                                        <span>Hastalık</span>
+                                        break;
+                                    case LeaveType.Personal:
+                                        <span>Mazeret</span>
+                                        break;
+                                    case LeaveType.Maternity:
+                                        <span>Doğum</span>
+                                        break;
+                                    case LeaveType.Paternity:
+                                        <span>Babalık</span>
+                                        break;
+                                    case LeaveType.Marriage:
+                                        <span>Evlilik</span>
+                                        break;
+                                    case LeaveType.Other:
+                                        <span>Diğer</span>
+                                        break;
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <h4 class="card-title border-bottom pb-2">İzin Bilgileri</h4>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.StartDate)</div>
+                            <div class="fw-bold">@Model.StartDate.ToShortDateString()</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.EndDate)</div>
+                            <div class="fw-bold">@Model.EndDate.ToShortDateString()</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.RequestDate)</div>
+                            <div class="fw-bold">@Model.RequestDate.ToString("dd.MM.yyyy HH:mm")</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.Status)</div>
+                            <div class="fw-bold">
+                                @switch (Model.Status)
+                                {
+                                    case LeaveStatus.Pending:
+                                        <span class="badge bg-warning">Bekliyor</span>
+                                        break;
+                                    case LeaveStatus.Approved:
+                                        <span class="badge bg-success">Onaylandı</span>
+                                        break;
+                                    case LeaveStatus.Rejected:
+                                        <span class="badge bg-danger">Reddedildi</span>
+                                        break;
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.Description)</div>
+                            <div class="fw-bold">@Html.DisplayFor(model => model.Description)</div>
+                        </div>
+                    </div>
+
+                    @if (Model.Status != LeaveStatus.Pending)
+                    {
+                        <div class="row mb-3">
+                            <h4 class="card-title border-bottom pb-2">İşlem Bilgileri</h4>
+                            @if (!string.IsNullOrEmpty(Model.ActionBy))
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="text-muted">@Html.DisplayNameFor(model => model.ActionBy)</div>
+                                    <div class="fw-bold">@Html.DisplayFor(model => model.ActionBy)</div>
+                                </div>
+                            }
+                            @if (Model.ActionDate.HasValue)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="text-muted">@Html.DisplayNameFor(model => model.ActionDate)</div>
+                                    <div class="fw-bold">@Model.ActionDate?.ToString("dd.MM.yyyy HH:mm")</div>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.ActionReason))
+                            {
+                                <div class="col-12">
+                                    <div class="text-muted">@Html.DisplayNameFor(model => model.ActionReason)</div>
+                                    <div class="fw-bold">@Html.DisplayFor(model => model.ActionReason)</div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Geri
+                        </a>
+                        
+                        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                        {
+                            @if (Model.Status == LeaveStatus.Pending)
+                            {
+                                <a asp-action="Approve" asp-route-id="@Model.Id" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Onayla
+                                </a>
+                                <a asp-action="Reject" asp-route-id="@Model.Id" class="btn btn-danger">
+                                    <i class="bi bi-x-circle"></i> Reddet
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                                    <i class="bi bi-pencil"></i> Düzenle
+                                </a>
+                            }
+                        }
+                        
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Sil
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

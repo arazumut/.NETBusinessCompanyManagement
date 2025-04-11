@@ -30,6 +30,10 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9BY2Nlc3NEZW5pZWQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/Views/Account/KullaniciRolleri.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9LdWxsYW5pY2lSb2xsZXJpLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/Views/Account/Lockout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9Mb2Nrb3V0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -44,6 +48,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/Views/Account/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9SZWdpc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/Views/Account/RolTesti.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9Sb2xUZXN0aS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/Views/Departments/Create.cshtml]
@@ -74,8 +82,32 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Qcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/Views/Leaves/Approve.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTGVhdmVzL0FwcHJvdmUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/Views/Leaves/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTGVhdmVzL0NyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/Views/Leaves/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTGVhdmVzL0RlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/Views/Leaves/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTGVhdmVzL0RldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/Views/Leaves/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTGVhdmVzL0VkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/Views/Leaves/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTGVhdmVzL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/Views/Leaves/Reject.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTGVhdmVzL1JlamVjdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/Views/Positions/Create.cshtml]
