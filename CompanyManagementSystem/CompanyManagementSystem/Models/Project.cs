@@ -12,11 +12,11 @@ namespace CompanyManagementSystem.Models
         [Required(ErrorMessage = "Proje adı zorunludur.")]
         [StringLength(100, ErrorMessage = "Proje adı en fazla 100 karakter olabilir.")]
         [Display(Name = "Proje Adı")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Display(Name = "Açıklama")]
         [StringLength(1000, ErrorMessage = "Açıklama en fazla 1000 karakter olabilir.")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required(ErrorMessage = "Başlangıç tarihi zorunludur.")]
         [DataType(DataType.Date)]
@@ -31,8 +31,8 @@ namespace CompanyManagementSystem.Models
         public ProjectStatus Status { get; set; } = ProjectStatus.Planning;
 
         // İlişkiler
-        public virtual ICollection<Employee> Employees { get; set; }
-        public virtual ICollection<WorkTask> Tasks { get; set; }
+        public virtual ICollection<Employee>? Employees { get; set; }
+        public virtual ICollection<WorkTask>? Tasks { get; set; }
     }
 
     public enum ProjectStatus

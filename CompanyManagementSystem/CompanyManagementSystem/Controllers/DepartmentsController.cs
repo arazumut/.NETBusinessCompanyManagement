@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using CompanyManagementSystem.Data;
 using CompanyManagementSystem.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
 
 namespace CompanyManagementSystem.Controllers
 {
@@ -34,6 +35,9 @@ namespace CompanyManagementSystem.Controllers
             }
 
             var department = await _context.Departments
+                .Include(d => d.Employees)
+                    .ThenInclude(e => e.Position)
+                .Include(d => d.Positions)
                 .FirstOrDefaultAsync(m => m.Id == id);
                 
             if (department == null)
@@ -55,12 +59,23 @@ namespace CompanyManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Description")] Department department)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(department);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(department);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = $"{department.Name} departmanı başarıyla oluşturuldu.";
+                    return RedirectToAction(nameof(Index));
+                }
             }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Departman eklenirken bir hata oluştu: " + ex.Message);
+                // Hata ayrıntılarını loglayalım
+                LogError(ex, "Departman ekleme hatası");
+            }
+            
             return View(department);
         }
 
@@ -96,8 +111,10 @@ namespace CompanyManagementSystem.Controllers
                 {
                     _context.Update(department);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = $"{department.Name} departmanı başarıyla güncellendi.";
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
                     if (!DepartmentExists(department.Id))
                     {
@@ -105,10 +122,17 @@ namespace CompanyManagementSystem.Controllers
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError("", "Departman güncellenirken bir hata oluştu: " + ex.Message);
+                        // Hata ayrıntılarını loglayalım
+                        LogError(ex, "Departman güncelleme hatası");
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Departman güncellenirken bir hata oluştu: " + ex.Message);
+                    // Hata ayrıntılarını loglayalım
+                    LogError(ex, "Departman güncelleme hatası");
+                }
             }
             return View(department);
         }
@@ -137,19 +161,60 @@ namespace CompanyManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var department = await _context.Departments.FindAsync(id);
-            if (department != null)
+            try
             {
-                _context.Departments.Remove(department);
-                await _context.SaveChangesAsync();
+                var department = await _context.Departments
+                    .Include(d => d.Employees)
+                    .Include(d => d.Positions)
+                    .FirstOrDefaultAsync(d => d.Id == id);
+                
+                if (department != null)
+                {
+                    // İlişkili kayıtları kontrol et
+                    if ((department.Employees != null && department.Employees.Any()) || 
+                        (department.Positions != null && department.Positions.Any()))
+                    {
+                        TempData["ErrorMessage"] = "Bu departmana bağlı çalışanlar veya pozisyonlar bulunduğu için silinemez.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    
+                    _context.Departments.Remove(department);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = $"{department.Name} departmanı başarıyla silindi.";
+                }
+                
+                return RedirectToAction(nameof(Index));
             }
-            
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Departman silinirken bir hata oluştu: " + ex.Message;
+                // Hata ayrıntılarını loglayalım
+                LogError(ex, "Departman silme hatası");
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool DepartmentExists(int id)
         {
             return _context.Departments.Any(e => e.Id == id);
+        }
+
+        protected void LogError(Exception ex, string message)
+        {
+            // Hata mesajını debug penceresine yazdır
+            Debug.WriteLine($"HATA: {message}");
+            Debug.WriteLine($"Hata Mesajı: {ex.Message}");
+            Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+            
+            // İç içe hata varsa onu da logla
+            if (ex.InnerException != null)
+            {
+                Debug.WriteLine($"İç Hata: {ex.InnerException.Message}");
+                Debug.WriteLine($"İç Hata Stack Trace: {ex.InnerException.StackTrace}");
+            }
+            
+            // Prodüksiyonda gerçek loglama mekanizması kullanılabilir
+            // _logger.LogError(ex, message);
         }
     }
 } 

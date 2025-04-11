@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using CompanyManagementSystem.Data;
 using CompanyManagementSystem.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace CompanyManagementSystem.Controllers
 {
@@ -23,7 +25,12 @@ namespace CompanyManagementSystem.Controllers
         // GET: Projects
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Projects.ToListAsync());
+            var projects = await _context.Projects
+                .Include(p => p.Employees)
+                .Include(p => p.Tasks)
+                .ToListAsync();
+                
+            return View(projects);
         }
 
         // GET: Projects/Details/5
@@ -61,27 +68,36 @@ namespace CompanyManagementSystem.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Create([Bind("Name,Description,StartDate,EndDate,Status")] Project project, int[] selectedEmployees)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(project);
-                await _context.SaveChangesAsync();
-                
-                // Seçilen çalışanları projeye ekle
-                if (selectedEmployees != null && selectedEmployees.Length > 0)
+                if (ModelState.IsValid)
                 {
-                    project.Employees = new List<Employee>();
-                    foreach (var employeeId in selectedEmployees)
-                    {
-                        var employee = await _context.Employees.FindAsync(employeeId);
-                        if (employee != null)
-                        {
-                            project.Employees.Add(employee);
-                        }
-                    }
+                    _context.Add(project);
                     await _context.SaveChangesAsync();
+                    
+                    // Seçilen çalışanları projeye ekle
+                    if (selectedEmployees != null && selectedEmployees.Length > 0)
+                    {
+                        project.Employees = new List<Employee>();
+                        foreach (var employeeId in selectedEmployees)
+                        {
+                            var employee = await _context.Employees.FindAsync(employeeId);
+                            if (employee != null)
+                            {
+                                project.Employees.Add(employee);
+                            }
+                        }
+                        await _context.SaveChangesAsync();
+                    }
+                    
+                    TempData["SuccessMessage"] = $"{project.Name} projesi başarıyla oluşturuldu.";
+                    return RedirectToAction(nameof(Index));
                 }
-                
-                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Proje eklenirken bir hata oluştu: " + ex.Message);
+                LogError(ex, "Proje ekleme hatası");
             }
             
             ViewBag.Employees = new MultiSelectList(_context.Employees.Where(e => e.IsActive), "Id", "FullName", selectedEmployees);
@@ -145,7 +161,15 @@ namespace CompanyManagementSystem.Controllers
                     existingProject.Status = project.Status;
                     
                     // Çalışanları güncelle
-                    existingProject.Employees.Clear();
+                    if (existingProject.Employees == null)
+                    {
+                        existingProject.Employees = new List<Employee>();
+                    }
+                    else
+                    {
+                        existingProject.Employees.Clear();
+                    }
+                    
                     if (selectedEmployees != null && selectedEmployees.Length > 0)
                     {
                         foreach (var employeeId in selectedEmployees)
@@ -159,8 +183,10 @@ namespace CompanyManagementSystem.Controllers
                     }
                     
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = $"{project.Name} projesi başarıyla güncellendi.";
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
                     if (!ProjectExists(project.Id))
                     {
@@ -168,10 +194,15 @@ namespace CompanyManagementSystem.Controllers
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError("", "Proje güncellenirken eşzamanlılık hatası oluştu: " + ex.Message);
+                        LogError(ex, "Proje güncelleme eşzamanlılık hatası");
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Proje güncellenirken bir hata oluştu: " + ex.Message);
+                    LogError(ex, "Proje güncelleme hatası");
+                }
             }
             
             ViewBag.Employees = new MultiSelectList(_context.Employees.Where(e => e.IsActive), "Id", "FullName", selectedEmployees);
@@ -188,6 +219,8 @@ namespace CompanyManagementSystem.Controllers
             }
 
             var project = await _context.Projects
+                .Include(p => p.Tasks)
+                .Include(p => p.Employees)
                 .FirstOrDefaultAsync(m => m.Id == id);
                 
             if (project == null)
@@ -196,8 +229,12 @@ namespace CompanyManagementSystem.Controllers
             }
 
             // İlişkili görevler var mı kontrol et
-            var hasTasks = await _context.WorkTasks.AnyAsync(t => t.ProjectId == id);
+            var hasTasks = project.Tasks != null && project.Tasks.Any();
             ViewBag.HasTasks = hasTasks;
+            
+            // İlişkili çalışanlar var mı kontrol et
+            var hasEmployees = project.Employees != null && project.Employees.Any();
+            ViewBag.HasEmployees = hasEmployees;
 
             return View(project);
         }
@@ -208,29 +245,55 @@ namespace CompanyManagementSystem.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var project = await _context.Projects.FindAsync(id);
-            
-            if (project != null)
+            try
             {
-                // İlişkili görevler var mı kontrol et
-                var hasTasks = await _context.WorkTasks.AnyAsync(t => t.ProjectId == id);
-                
-                if (hasTasks)
+                var project = await _context.Projects
+                    .Include(p => p.Tasks)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+                    
+                if (project == null)
                 {
-                    ModelState.AddModelError(string.Empty, "Bu projeye atanmış görevler olduğu için silinemez.");
-                    return View(project);
+                    return NotFound();
+                }
+                
+                // İlişkili görevler var mı kontrol et
+                if (project.Tasks != null && project.Tasks.Any())
+                {
+                    TempData["ErrorMessage"] = "Bu projeye atanmış görevler olduğu için silinemez.";
+                    return RedirectToAction(nameof(Index));
                 }
                 
                 _context.Projects.Remove(project);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"{project.Name} projesi başarıyla silindi.";
+                return RedirectToAction(nameof(Index));
             }
-            
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Proje silinirken bir hata oluştu: " + ex.Message;
+                LogError(ex, "Proje silme hatası");
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool ProjectExists(int id)
         {
             return _context.Projects.Any(e => e.Id == id);
+        }
+        
+        protected void LogError(Exception ex, string message)
+        {
+            // Hata mesajını debug penceresine yazdır
+            Debug.WriteLine($"HATA: {message}");
+            Debug.WriteLine($"Hata Mesajı: {ex.Message}");
+            Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+            
+            // İç içe hata varsa onu da logla
+            if (ex.InnerException != null)
+            {
+                Debug.WriteLine($"İç Hata: {ex.InnerException.Message}");
+                Debug.WriteLine($"İç Hata Stack Trace: {ex.InnerException.StackTrace}");
+            }
         }
     }
 } 

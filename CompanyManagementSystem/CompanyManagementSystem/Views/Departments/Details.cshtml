@@ -1,0 +1,107 @@
+@model CompanyManagementSystem.Models.Department
+
+@{
+    ViewData["Title"] = "Departman Detayları";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h2 class="text-center mb-0">@ViewData["Title"]</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5>@Html.DisplayNameFor(model => model.Name)</h5>
+                            <p class="fs-5 fw-bold">@Html.DisplayFor(model => model.Name)</p>
+                        </div>
+                        
+                        <div class="col-md-12 mt-3">
+                            <h5>@Html.DisplayNameFor(model => model.Description)</h5>
+                            <p>@Html.DisplayFor(model => model.Description)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5>Bağlı Personeller</h5>
+                            @if (Model.Employees != null && Model.Employees.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Ad Soyad</th>
+                                                <th>Pozisyon</th>
+                                                <th>E-posta</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var employee in Model.Employees)
+                                            {
+                                                <tr>
+                                                    <td>@employee.FullName</td>
+                                                    <td>@(employee.Position?.Name ?? "Belirtilmemiş")</td>
+                                                    <td>@employee.Email</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Bu departmana bağlı personel bulunmamaktadır.</p>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5>Pozisyonlar</h5>
+                            @if (Model.Positions != null && Model.Positions.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Pozisyon Adı</th>
+                                                <th>Açıklama</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var position in Model.Positions)
+                                            {
+                                                <tr>
+                                                    <td>@position.Name</td>
+                                                    <td>@position.Description</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Bu departmanda tanımlı pozisyon bulunmamaktadır.</p>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Listeye Dön
+                        </a>
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                                <i class="bi bi-pencil"></i> Düzenle
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

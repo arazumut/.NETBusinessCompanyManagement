@@ -11,14 +11,14 @@ namespace CompanyManagementSystem.Models
         [Required(ErrorMessage = "Departman adı zorunludur.")]
         [StringLength(100, ErrorMessage = "Departman adı en fazla 100 karakter olabilir.")]
         [Display(Name = "Departman Adı")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Display(Name = "Açıklama")]
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         // İlişkiler
-        public virtual ICollection<Position> Positions { get; set; }
-        public virtual ICollection<Employee> Employees { get; set; }
+        public virtual ICollection<Position>? Positions { get; set; }
+        public virtual ICollection<Employee>? Employees { get; set; }
     }
 } 

@@ -1,0 +1,160 @@
+@model CompanyManagementSystem.Models.Project
+
+@{
+    ViewData["Title"] = "Proje Detayları";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h2 class="text-center mb-0">@ViewData["Title"]</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h4 class="card-title border-bottom pb-2">@Html.DisplayFor(model => model.Name)</h4>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.StartDate)</div>
+                            <div class="fw-bold">@Model.StartDate.ToShortDateString()</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.EndDate)</div>
+                            <div class="fw-bold">@(Model.EndDate.HasValue ? Model.EndDate.Value.ToShortDateString() : "-")</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.Status)</div>
+                            <div class="fw-bold">
+                                @switch (Model.Status)
+                                {
+                                    case ProjectStatus.Planning:
+                                        <span class="badge bg-info">Planlama</span>
+                                        break;
+                                    case ProjectStatus.InProgress:
+                                        <span class="badge bg-primary">Devam Ediyor</span>
+                                        break;
+                                    case ProjectStatus.Completed:
+                                        <span class="badge bg-success">Tamamlandı</span>
+                                        break;
+                                    case ProjectStatus.Cancelled:
+                                        <span class="badge bg-danger">İptal Edildi</span>
+                                        break;
+                                    case ProjectStatus.OnHold:
+                                        <span class="badge bg-warning">Beklemede</span>
+                                        break;
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 mt-3">
+                            <div class="text-muted">@Html.DisplayNameFor(model => model.Description)</div>
+                            <p class="mt-2">@Html.DisplayFor(model => model.Description)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5>Proje Ekibi</h5>
+                            @if (Model.Employees != null && Model.Employees.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Ad Soyad</th>
+                                                <th>Pozisyon</th>
+                                                <th>E-posta</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var employee in Model.Employees)
+                                            {
+                                                <tr>
+                                                    <td>@employee.FullName</td>
+                                                    <td>@(employee.Position?.Name ?? "Belirtilmemiş")</td>
+                                                    <td>@employee.Email</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Bu projeye atanmış personel bulunmamaktadır.</p>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5>Görevler</h5>
+                            @if (Model.Tasks != null && Model.Tasks.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Görev</th>
+                                                <th>Durum</th>
+                                                <th>Atanan</th>
+                                                <th>Bitiş Tarihi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var task in Model.Tasks)
+                                            {
+                                                <tr>
+                                                    <td>@task.Name</td>
+                                                    <td>
+                                                        @switch (task.Status)
+                                                        {
+                                                            case WorkTaskStatus.ToDo:
+                                                                <span class="badge bg-secondary">Yapılacak</span>
+                                                                break;
+                                                            case WorkTaskStatus.InProgress:
+                                                                <span class="badge bg-primary">Devam Ediyor</span>
+                                                                break;
+                                                            case WorkTaskStatus.Done:
+                                                                <span class="badge bg-success">Tamamlandı</span>
+                                                                break;
+                                                        }
+                                                    </td>
+                                                    <td>@(task.AssignedTo?.FullName ?? "Atanmamış")</td>
+                                                    <td>@(task.DueDate.HasValue ? task.DueDate.Value.ToShortDateString() : "-")</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Bu projeye atanmış görev bulunmamaktadır.</p>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Listeye Dön
+                        </a>
+                        <div>
+                            @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                                    <i class="bi bi-pencil"></i> Düzenle
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

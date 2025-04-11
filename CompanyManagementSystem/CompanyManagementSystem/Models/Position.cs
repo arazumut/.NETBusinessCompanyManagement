@@ -11,11 +11,11 @@ namespace CompanyManagementSystem.Models
         [Required(ErrorMessage = "Pozisyon adı zorunludur.")]
         [StringLength(100, ErrorMessage = "Pozisyon adı en fazla 100 karakter olabilir.")]
         [Display(Name = "Pozisyon Adı")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Display(Name = "Açıklama")]
         [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         // Departman ile ilişki
         [Required(ErrorMessage = "Departman seçimi zorunludur.")]
@@ -23,9 +23,9 @@ namespace CompanyManagementSystem.Models
         public int DepartmentId { get; set; }
 
         [ForeignKey("DepartmentId")]
-        public virtual Department Department { get; set; }
+        public virtual Department? Department { get; set; }
 
         // Personel ile ilişki
-        public virtual ICollection<Employee> Employees { get; set; }
+        public virtual ICollection<Employee>? Employees { get; set; }
     }
 } 
