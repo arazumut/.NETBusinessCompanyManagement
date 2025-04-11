@@ -12,60 +12,185 @@
         </a>
     </div>
 
-    <div class="card shadow">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-light">
+            <h5 class="mb-0"><i class="bi bi-funnel"></i> Filtreler</h5>
+        </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th>@Html.DisplayNameFor(model => model.FirstName)</th>
-                            <th>@Html.DisplayNameFor(model => model.LastName)</th>
-                            <th>@Html.DisplayNameFor(model => model.Email)</th>
-                            <th>@Html.DisplayNameFor(model => model.Department)</th>
-                            <th>@Html.DisplayNameFor(model => model.Position)</th>
-                            <th>@Html.DisplayNameFor(model => model.StartDate)</th>
-                            <th>@Html.DisplayNameFor(model => model.IsActive)</th>
-                            <th>İşlemler</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
-                                <td>@Html.DisplayFor(modelItem => item.LastName)</td>
-                                <td>@Html.DisplayFor(modelItem => item.Email)</td>
-                                <td>@Html.DisplayFor(modelItem => item.Department.Name)</td>
-                                <td>@Html.DisplayFor(modelItem => item.Position.Name)</td>
-                                <td>@Html.DisplayFor(modelItem => item.StartDate)</td>
-                                <td>
-                                    @if (item.IsActive)
+            <form asp-action="Index" method="get" id="filterForm">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="searchString" name="searchString" 
+                                   value="@ViewData["SearchString"]" placeholder="Ad, soyad veya e-posta ile ara">
+                            <label for="searchString">Ad, soyad veya e-posta ile ara</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <select class="form-select" id="departmentId" name="departmentId" aria-label="Departman Seçin">
+                                <option value="">Tüm Departmanlar</option>
+                                @foreach (SelectListItem department in ViewData["Departments"] as SelectList)
+                                {
+                                    if (ViewData["DepartmentId"] != null && int.Parse(department.Value) == (int)ViewData["DepartmentId"])
                                     {
-                                        <span class="badge bg-success">Aktif</span>
+                                        <option value="@department.Value" selected>@department.Text</option>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-danger">Pasif</span>
+                                        <option value="@department.Value">@department.Text</option>
                                     }
-                                </td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
-                                            <i class="bi bi-pencil"></i> Düzenle
-                                        </a>
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
-                                            <i class="bi bi-info-circle"></i> Detaylar
-                                        </a>
-                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
-                                            <i class="bi bi-trash"></i> Sil
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                                }
+                            </select>
+                            <label for="departmentId">Departman</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <select class="form-select" id="positionId" name="positionId" aria-label="Pozisyon Seçin">
+                                <option value="">Tüm Pozisyonlar</option>
+                                @foreach (SelectListItem position in ViewData["Positions"] as SelectList)
+                                {
+                                    if (ViewData["PositionId"] != null && int.Parse(position.Value) == (int)ViewData["PositionId"])
+                                    {
+                                        <option value="@position.Value" selected>@position.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@position.Value">@position.Text</option>
+                                    }
+                                }
+                            </select>
+                            <label for="positionId">Pozisyon</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            <select class="form-select" id="status" name="status" aria-label="Durum Seçin">
+                                <option value="">Tüm Durumlar</option>
+                                @if (ViewData["Status"]?.ToString() == "active")
+                                {
+                                    <option value="active" selected>Aktif</option>
+                                }
+                                else
+                                {
+                                    <option value="active">Aktif</option>
+                                }
+
+                                @if (ViewData["Status"]?.ToString() == "inactive")
+                                {
+                                    <option value="inactive" selected>Pasif</option>
+                                }
+                                else
+                                {
+                                    <option value="inactive">Pasif</option>
+                                }
+                            </select>
+                            <label for="status">Durum</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="button" class="btn btn-outline-secondary me-2" onclick="clearFilters()">
+                        <i class="bi bi-x-circle"></i> Filtreleri Temizle
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search"></i> Ara
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-</div> 
+
+    <div class="card shadow">
+        <div class="card-header py-3 bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-people"></i> Personel Listesi</h5>
+            <span class="badge bg-primary">Toplam: @Model.Count() personel</span>
+        </div>
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    Kriterlere uygun personel bulunamadı.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.FirstName)</th>
+                                <th>@Html.DisplayNameFor(model => model.LastName)</th>
+                                <th>@Html.DisplayNameFor(model => model.Email)</th>
+                                <th>@Html.DisplayNameFor(model => model.Department)</th>
+                                <th>@Html.DisplayNameFor(model => model.Position)</th>
+                                <th>@Html.DisplayNameFor(model => model.StartDate)</th>
+                                <th>@Html.DisplayNameFor(model => model.IsActive)</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Department.Name)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Position.Name)</td>
+                                    <td>@item.StartDate.ToShortDateString()</td>
+                                    <td>
+                                        @if (item.IsActive)
+                                        {
+                                            <span class="badge bg-success">Aktif</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Pasif</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
+                                                <i class="bi bi-info-circle"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function clearFilters() {
+            document.getElementById('searchString').value = '';
+            document.getElementById('departmentId').value = '';
+            document.getElementById('positionId').value = '';
+            document.getElementById('status').value = '';
+            document.getElementById('filterForm').submit();
+        }
+        
+        // Formun enter tuşu ile gönderilmesini sağlama
+        document.getElementById('searchString').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('filterForm').submit();
+            }
+        });
+    </script>
+} 

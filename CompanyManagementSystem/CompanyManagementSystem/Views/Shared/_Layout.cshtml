@@ -25,9 +25,18 @@
                         </li>
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
+                            @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Dashboard">
+                                        <i class="bi bi-speedometer2"></i> Kontrol Paneli
+                                    </a>
+                                </li>
+                            }
+                            
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="managementDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Yönetim
+                                    <i class="bi bi-gear"></i> Yönetim
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="managementDropdown">
                                     @if (User.IsInRole("Admin") || User.IsInRole("Manager"))

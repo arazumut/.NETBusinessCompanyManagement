@@ -27,14 +27,52 @@ namespace CompanyManagementSystem.Controllers
         }
 
         // GET: Employees
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, int? departmentId, int? positionId, string status)
         {
-            var employees = await _context.Employees
+            var employeesQuery = _context.Employees
                 .Include(e => e.Department)
                 .Include(e => e.Position)
                 .Include(e => e.User)
-                .ToListAsync();
+                .AsQueryable();
                 
+            // Arama filtresi
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                employeesQuery = employeesQuery.Where(e => 
+                    e.FirstName.Contains(searchString) || 
+                    e.LastName.Contains(searchString) || 
+                    e.Email.Contains(searchString) ||
+                    e.Phone.Contains(searchString));
+            }
+            
+            // Departman filtresi
+            if (departmentId.HasValue)
+            {
+                employeesQuery = employeesQuery.Where(e => e.DepartmentId == departmentId.Value);
+            }
+            
+            // Pozisyon filtresi
+            if (positionId.HasValue)
+            {
+                employeesQuery = employeesQuery.Where(e => e.PositionId == positionId.Value);
+            }
+            
+            // Durum filtresi
+            if (!string.IsNullOrEmpty(status))
+            {
+                bool isActive = status == "active";
+                employeesQuery = employeesQuery.Where(e => e.IsActive == isActive);
+            }
+            
+            // Seçim listeleri için verileri hazırla
+            ViewData["Departments"] = new SelectList(_context.Departments, "Id", "Name");
+            ViewData["Positions"] = new SelectList(_context.Positions, "Id", "Name");
+            ViewData["SearchString"] = searchString;
+            ViewData["DepartmentId"] = departmentId;
+            ViewData["PositionId"] = positionId;
+            ViewData["Status"] = status;
+            
+            var employees = await employeesQuery.ToListAsync();
             return View(employees);
         }
 

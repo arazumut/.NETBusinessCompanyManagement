@@ -1,0 +1,321 @@
+@{
+    ViewData["Title"] = "Kontrol Paneli";
+    var totalEmployees = ViewData["TotalEmployees"] as int? ?? 0;
+    var activeEmployees = ViewData["ActiveEmployees"] as int? ?? 0;
+    var totalDepartments = ViewData["TotalDepartments"] as int? ?? 0;
+    var totalProjects = ViewData["TotalProjects"] as int? ?? 0;
+    var activeProjects = ViewData["ActiveProjects"] as int? ?? 0;
+    var pendingLeaves = ViewData["PendingLeaves"] as int? ?? 0;
+    var recentEmployees = ViewData["RecentEmployees"] as List<CompanyManagementSystem.Models.Employee> ?? new List<CompanyManagementSystem.Models.Employee>();
+    var ongoingProjects = ViewData["OngoingProjects"] as List<CompanyManagementSystem.Models.Project> ?? new List<CompanyManagementSystem.Models.Project>();
+    var departmentStats = ViewData["DepartmentStats"] as List<dynamic> ?? new List<dynamic>();
+}
+
+<div class="container-fluid py-4">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
+    
+    <!-- Özet Kartlar -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Toplam Personel</h5>
+                            <h2 class="display-4 fw-bold mb-0">@totalEmployees</h2>
+                        </div>
+                        <div class="p-3 bg-primary bg-opacity-25 rounded">
+                            <i class="bi bi-people display-6"></i>
+                        </div>
+                    </div>
+                    <p class="mt-2 mb-0">Aktif: @activeEmployees | Pasif: @(totalEmployees - activeEmployees)</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Departmanlar</h5>
+                            <h2 class="display-4 fw-bold mb-0">@totalDepartments</h2>
+                        </div>
+                        <div class="p-3 bg-success bg-opacity-25 rounded">
+                            <i class="bi bi-building display-6"></i>
+                        </div>
+                    </div>
+                    <p class="mt-2 mb-0">Ortalama: @(totalEmployees > 0 && totalDepartments > 0 ? Math.Round((double)totalEmployees / totalDepartments, 1) : 0) personel/departman</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Projeler</h5>
+                            <h2 class="display-4 fw-bold mb-0">@totalProjects</h2>
+                        </div>
+                        <div class="p-3 bg-info bg-opacity-25 rounded">
+                            <i class="bi bi-kanban display-6"></i>
+                        </div>
+                    </div>
+                    <p class="mt-2 mb-0">Aktif: @activeProjects | Tamamlanan: @(totalProjects - activeProjects)</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Bekleyen İzin</h5>
+                            <h2 class="display-4 fw-bold mb-0">@pendingLeaves</h2>
+                        </div>
+                        <div class="p-3 bg-warning bg-opacity-25 rounded">
+                            <i class="bi bi-calendar-check display-6"></i>
+                        </div>
+                    </div>
+                    <p class="mt-2 mb-0">
+                        @if (pendingLeaves > 0)
+                        {
+                            <a href="#" class="text-white text-decoration-underline">İzinleri görüntüle</a>
+                        }
+                        else
+                        {
+                            <span>Bekleyen izin talebi yok</span>
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Detay Kartlar -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person-plus-fill me-2"></i>Yeni Katılan Personeller
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    @if (recentEmployees.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Personel</th>
+                                        <th>Departman</th>
+                                        <th>Pozisyon</th>
+                                        <th>Başlama Tarihi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var employee in recentEmployees)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://ui-avatars.com/api/?name=@employee.FullName&background=0D6EFD&color=fff&size=32" 
+                                                         class="rounded-circle me-2" width="32" height="32" alt="@employee.FullName" />
+                                                    <span>@employee.FullName</span>
+                                                </div>
+                                            </td>
+                                            <td>@employee.Department?.Name</td>
+                                            <td>@employee.Position?.Name</td>
+                                            <td>@employee.StartDate.ToShortDateString()</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-4 text-center">
+                            <p class="text-muted">Henüz yeni katılan personel bulunmamaktadır.</p>
+                        </div>
+                    }
+                </div>
+                <div class="card-footer text-end">
+                    <a asp-controller="Employees" asp-action="Index" class="btn btn-sm btn-outline-primary">
+                        Tüm Personeller <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-kanban me-2"></i>Devam Eden Projeler
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    @if (ongoingProjects.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Proje</th>
+                                        <th>Başlangıç</th>
+                                        <th>Bitiş</th>
+                                        <th>Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var project in ongoingProjects)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@project.Name</strong>
+                                            </td>
+                                            <td>@project.StartDate.ToShortDateString()</td>
+                                            <td>@project.EndDate?.ToShortDateString()</td>
+                                            <td>
+                                                <span class="badge bg-info">@project.Status</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-4 text-center">
+                            <p class="text-muted">Devam eden proje bulunmamaktadır.</p>
+                        </div>
+                    }
+                </div>
+                <div class="card-footer text-end">
+                    <a asp-controller="Projects" asp-action="Index" class="btn btn-sm btn-outline-primary">
+                        Tüm Projeler <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-12 mt-4">
+            <div class="card shadow">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-pie-chart me-2"></i>Departman İstatistikleri
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (departmentStats.Any())
+                    {
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="chart-container" style="position: relative; height:300px;">
+                                    <canvas id="departmentChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Departman</th>
+                                                <th>Personel</th>
+                                                <th>Oran</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var stat in departmentStats)
+                                            {
+                                                <tr>
+                                                    <td>@stat.DepartmentName</td>
+                                                    <td>@stat.EmployeeCount</td>
+                                                    <td>
+                                                        @{
+                                                            var percentage = totalEmployees > 0 ? Math.Round((double)stat.EmployeeCount / totalEmployees * 100, 1) : 0;
+                                                        }
+                                                        <div class="progress" style="height: 6px;">
+                                                            <div class="progress-bar" role="progressbar" style="width: @percentage%;" 
+                                                                 aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100"></div>
+                                                        </div>
+                                                        <small>%@percentage</small>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center">
+                            <p class="text-muted">Departman verisi bulunmamaktadır.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Departman istatistikleri için grafik
+            var departmentNames = [@Html.Raw(string.Join(",", departmentStats.Select(d => $"'{d.DepartmentName}'")))];
+            var employeeCounts = [@string.Join(",", departmentStats.Select(d => d.EmployeeCount))];
+            
+            if (departmentNames.length > 0) {
+                var ctx = document.getElementById('departmentChart').getContext('2d');
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: departmentNames,
+                        datasets: [{
+                            label: 'Personel Sayısı',
+                            data: employeeCounts,
+                            backgroundColor: [
+                                'rgba(13, 110, 253, 0.7)',
+                                'rgba(25, 135, 84, 0.7)',
+                                'rgba(220, 53, 69, 0.7)',
+                                'rgba(255, 193, 7, 0.7)',
+                                'rgba(13, 202, 240, 0.7)',
+                                'rgba(108, 117, 125, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(13, 110, 253, 1)',
+                                'rgba(25, 135, 84, 1)',
+                                'rgba(220, 53, 69, 1)',
+                                'rgba(255, 193, 7, 1)',
+                                'rgba(13, 202, 240, 1)',
+                                'rgba(108, 117, 125, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+} 

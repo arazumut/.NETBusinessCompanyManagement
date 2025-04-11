@@ -255,3 +255,4 @@
 /Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/obj/Debug/net8.0/CompanyManagementSystem.pdb
 /Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/obj/Debug/net8.0/CompanyManagementSystem.genruntimeconfig.cache
 /Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/obj/Debug/net8.0/ref/CompanyManagementSystem.dll
+/Users/umutaraz/Desktop/DotnetBusinessManagement/CompanyManagementSystem/CompanyManagementSystem/obj/Debug/net8.0/CompanyManagementSystem.sourcelink.json

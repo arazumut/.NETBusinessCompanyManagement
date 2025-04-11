@@ -6,109 +6,214 @@
 }
 
 <div class="container py-4">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h2 class="mb-0">Profil Bilgileri</h2>
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-person-circle me-2"></i>Profil
+                    </h3>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <img src="https://ui-avatars.com/api/?name=@(isEmployee ? (Model as CompanyManagementSystem.ViewModels.EmployeeProfileViewModel)?.FullName : (Model as CompanyManagementSystem.ViewModels.UserProfileViewModel)?.UserName)&background=0D6EFD&color=fff&size=128" 
+                             class="rounded-circle img-thumbnail" alt="Profil" width="150" height="150">
+                    </div>
+                    
+                    @if (isEmployee)
+                    {
+                        var employee = Model as CompanyManagementSystem.ViewModels.EmployeeProfileViewModel;
+                        <h4 class="mb-0">@employee.FullName</h4>
+                        <p class="text-muted">@employee.Position - @employee.Department</p>
+                        
+                        <div class="d-flex justify-content-center mt-3">
+                            @foreach (var role in employee.Roles)
+                            {
+                                <span class="badge bg-primary me-2">@role</span>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        var user = Model as CompanyManagementSystem.ViewModels.UserProfileViewModel;
+                        <h4 class="mb-0">@user.UserName</h4>
+                        <p class="text-muted">@user.Email</p>
+                        
+                        <div class="d-flex justify-content-center mt-3">
+                            @foreach (var role in user.Roles)
+                            {
+                                <span class="badge bg-primary me-2">@role</span>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="card-footer">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class="bi bi-pencil-square me-2"></i>Profili Düzenle
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary">
+                            <i class="bi bi-key me-2"></i>Şifre Değiştir
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
+        
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Detaylı Bilgiler
+                    </h3>
+                </div>
+                <div class="card-body">
+                    @if (isEmployee)
+                    {
+                        var employee = Model as CompanyManagementSystem.ViewModels.EmployeeProfileViewModel;
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="bi bi-person-badge me-2 text-primary"></i>
+                                            <strong>TC Kimlik No</strong>
+                                        </div>
+                                        <span>@employee.IdentityNumber</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="bi bi-envelope me-2 text-primary"></i>
+                                            <strong>E-posta</strong>
+                                        </div>
+                                        <span>@employee.Email</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="bi bi-telephone me-2 text-primary"></i>
+                                            <strong>Telefon</strong>
+                                        </div>
+                                        <span>@(string.IsNullOrEmpty(employee.Phone) ? "-" : employee.Phone)</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="bi bi-building me-2 text-primary"></i>
+                                            <strong>Departman</strong>
+                                        </div>
+                                        <span>@employee.Department</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="bi bi-briefcase me-2 text-primary"></i>
+                                            <strong>Pozisyon</strong>
+                                        </div>
+                                        <span>@employee.Position</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="bi bi-calendar-date me-2 text-primary"></i>
+                                            <strong>Başlama Tarihi</strong>
+                                        </div>
+                                        <span>@employee.StartDate.ToShortDateString()</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="bi bi-toggle-on me-2 text-primary"></i>
+                                            <strong>Durum</strong>
+                                        </div>
+                                        @if (employee.IsActive)
+                                        {
+                                            <span class="badge bg-success">Aktif</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Pasif</span>
+                                        }
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h5><i class="bi bi-geo-alt me-2 text-primary"></i>Adres</h5>
+                            <p>@(string.IsNullOrEmpty(employee.Address) ? "-" : employee.Address)</p>
+                        </div>
+                    }
+                    else
+                    {
+                        var user = Model as CompanyManagementSystem.ViewModels.UserProfileViewModel;
+                        <div class="alert alert-info mb-4">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            Personel kaydınız henüz oluşturulmamış. Lütfen yöneticinizle iletişime geçiniz.
+                        </div>
+                        
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi bi-person me-2 text-primary"></i>
+                                    <strong>Kullanıcı Adı</strong>
+                                </div>
+                                <span>@user.UserName</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi bi-envelope me-2 text-primary"></i>
+                                    <strong>E-posta</strong>
+                                </div>
+                                <span>@user.Email</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi bi-telephone me-2 text-primary"></i>
+                                    <strong>Telefon</strong>
+                                </div>
+                                <span>@(string.IsNullOrEmpty(user.PhoneNumber) ? "-" : user.PhoneNumber)</span>
+                            </li>
+                        </ul>
+                    }
+                </div>
+            </div>
+            
             @if (isEmployee)
             {
                 var employee = Model as CompanyManagementSystem.ViewModels.EmployeeProfileViewModel;
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <h5 class="text-muted mb-1">Ad Soyad</h5>
-                            <p class="fs-5">@employee.FullName</p>
-                        </div>
-                        <div class="mb-3">
-                            <h5 class="text-muted mb-1">TC Kimlik No</h5>
-                            <p class="fs-5">@employee.IdentityNumber</p>
-                        </div>
-                        <div class="mb-3">
-                            <h5 class="text-muted mb-1">E-posta</h5>
-                            <p class="fs-5">@employee.Email</p>
-                        </div>
-                        <div class="mb-3">
-                            <h5 class="text-muted mb-1">Telefon</h5>
-                            <p class="fs-5">@(string.IsNullOrEmpty(employee.Phone) ? "-" : employee.Phone)</p>
-                        </div>
+                <div class="card shadow mt-4">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">
+                            <i class="bi bi-award me-2"></i>Aktiviteler
+                        </h3>
                     </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <h5 class="text-muted mb-1">Departman</h5>
-                            <p class="fs-5">@employee.Department</p>
+                    <div class="card-body">
+                        <ul class="nav nav-tabs" id="activityTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects" type="button" role="tab" aria-controls="projects" aria-selected="true">
+                                    <i class="bi bi-kanban me-1"></i>Projeler
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="leaves-tab" data-bs-toggle="tab" data-bs-target="#leaves" type="button" role="tab" aria-controls="leaves" aria-selected="false">
+                                    <i class="bi bi-calendar me-1"></i>İzinler
+                                </button>
+                            </li>
+                        </ul>
+                        <div class="tab-content p-3 border border-top-0 rounded-bottom" id="activityTabContent">
+                            <div class="tab-pane fade show active" id="projects" role="tabpanel" aria-labelledby="projects-tab">
+                                <p class="text-muted">Henüz atanmış proje bulunmamaktadır.</p>
+                            </div>
+                            <div class="tab-pane fade" id="leaves" role="tabpanel" aria-labelledby="leaves-tab">
+                                <p class="text-muted">İzin talebiniz bulunmamaktadır.</p>
+                                <a href="#" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-plus-circle me-1"></i>Yeni İzin Talebi
+                                </a>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <h5 class="text-muted mb-1">Pozisyon</h5>
-                            <p class="fs-5">@employee.Position</p>
-                        </div>
-                        <div class="mb-3">
-                            <h5 class="text-muted mb-1">Başlama Tarihi</h5>
-                            <p class="fs-5">@employee.StartDate.ToShortDateString()</p>
-                        </div>
-                        <div class="mb-3">
-                            <h5 class="text-muted mb-1">Durum</h5>
-                            <p>
-                                @if (employee.IsActive)
-                                {
-                                    <span class="badge bg-success fs-6">Aktif</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-danger fs-6">Pasif</span>
-                                }
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <h5 class="text-muted mb-1">Adres</h5>
-                    <p class="fs-5">@(string.IsNullOrEmpty(employee.Address) ? "-" : employee.Address)</p>
-                </div>
-                <div class="mb-3">
-                    <h5 class="text-muted mb-1">Roller</h5>
-                    <div>
-                        @foreach (var role in employee.Roles)
-                        {
-                            <span class="badge bg-primary me-2">@role</span>
-                        }
                     </div>
                 </div>
             }
-            else
-            {
-                var user = Model as CompanyManagementSystem.ViewModels.UserProfileViewModel;
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle-fill me-2"></i>
-                    Personel kaydınız henüz oluşturulmamış. Lütfen yöneticinizle iletişime geçiniz.
-                </div>
-                <div class="mb-3">
-                    <h5 class="text-muted mb-1">Kullanıcı Adı</h5>
-                    <p class="fs-5">@user.UserName</p>
-                </div>
-                <div class="mb-3">
-                    <h5 class="text-muted mb-1">E-posta</h5>
-                    <p class="fs-5">@user.Email</p>
-                </div>
-                <div class="mb-3">
-                    <h5 class="text-muted mb-1">Telefon</h5>
-                    <p class="fs-5">@(string.IsNullOrEmpty(user.PhoneNumber) ? "-" : user.PhoneNumber)</p>
-                </div>
-                <div class="mb-3">
-                    <h5 class="text-muted mb-1">Roller</h5>
-                    <div>
-                        @foreach (var role in user.Roles)
-                        {
-                            <span class="badge bg-primary me-2">@role</span>
-                        }
-                    </div>
-                </div>
-            }
-        </div>
-        <div class="card-footer">
-            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
-                <i class="bi bi-house"></i> Ana Sayfaya Dön
-            </a>
         </div>
     </div>
 </div> 
